@@ -107,19 +107,19 @@ sudo pon vpn_PPTP
 
 Проверка наличия соединения VPN:
 1) выключить vpn
-2) sudo apt install traceroute
-3) traceroute 1.1.1.1 >> vpn_test.log
-4) sudo pon vpn_PPTP
-5) traceroute 1.1.1.1 >> vpn_test.log
-6) nano test.log
+2) `sudo apt install traceroute`
+3) `traceroute 1.1.1.1 >> vpn_test.log`
+4) `sudo pon vpn_PPTP`
+5) `traceroute 1.1.1.1 >> vpn_test.log`
+6) `nano test.log`
 7) Сравнить результаты. Программа показывает маршрут, который проходит запрос до сервера 1.1.1.1 (ДНС сервер гугла). Если пути отличаются, то впн соединение работает успешно 
 
 Проверка установки CRI-O
-1) apt list --installed | grep "crio"
+1) `apt list --installed | grep "crio"`
 2) найти в списке cri-o, cri-o-runc, cri-tools и их версии (1.25)
 
 Проверка установки k8s
-1) apt list --installed | grep "kube"
+1) `apt list --installed | grep "kube"`
 2) найти в списке kubelet, kubeadm, kubectl
 
 ## Траблшутинг
