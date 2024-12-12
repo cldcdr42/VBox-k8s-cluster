@@ -122,6 +122,15 @@ sudo pon vpn_PPTP
 1) `apt list --installed | grep "kube"`
 2) найти в списке kubelet, kubeadm, kubectl
 
+Проверка SWAP
+1) `swapon -s`
+2) если команда выполнена и отсутвует вывод, то Swap выключет
+
+Проверка статуса CRI-O
+1) `systemctl status crio`
+2) Статус должен быть Active (running)
+3) Если статус не Active (running), запустите снова `systemctl start crio && systemctl enable crio`
+
 ## Траблшутинг
 | Проблема | Решение |
 | -------- | ------- |
