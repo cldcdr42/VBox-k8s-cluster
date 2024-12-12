@@ -124,12 +124,12 @@ sudo pon vpn_PPTP
 
 Проверка SWAP
 1) `swapon -s`
-2) если команда выполнена и отсутвует вывод, то Swap выключет
+2) если команда выполнена и отсутвует вывод, то Swap выключен
 
 Проверка статуса CRI-O
 1) `systemctl status crio`
 2) Статус должен быть Active (running)
-3) Если статус не Active (running), запустите снова `systemctl start crio && systemctl enable crio`
+3) Если статус не Active (running), запустите снова: `systemctl start crio && systemctl enable crio`
 
 ## Траблшутинг
 | Проблема | Решение |
@@ -158,5 +158,5 @@ https://v1-29.docs.kubernetes.io/docs/setup/production-environment/tools/kubeadm
 https://www.techrepublic.com/article/how-to-enable-copy-and-paste-in-virtualbox/
 
 PPTP vpn клиент на linux (без десктопа)
-https://www.russianproxy.ru/pptp-client-setup-debian-ubuntu
+https://www.russianproxy.ru/pptp-client-setup-debian-ubuntu  
 https://www.networkinghowtos.com/howto/connect-to-a-pptp-vpn-server-from-ubuntu-linux/
