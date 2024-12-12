@@ -16,19 +16,19 @@ VERSION="1.25"
 
 # ========== CONFIG - end ========== #
 
-echo "[1/?] Updating system packages..."
+echo "[1/10] Updating system packages..."
 apt update && apt upgrade -y
-echo "[1/?] Updationg system packages... Complete!"
+echo "[1/10] Updationg system packages... Complete!"
 
 # ==========
 
-echo "[2/?] Installing pptp-linux..."
+echo "[2/10] Installing pptp-linux..."
 apt install pptp-linux
-echo "[2/?] Intsalling pptp-linux... Complete!"
+echo "[2/10] Intsalling pptp-linux... Complete!"
 
 # ==========
 
-echo "[3/?] Creating PPTP VPN config file..."
+echo "[3/10] Creating PPTP VPN config file..."
 
 cat <<EOL > /etc/ppp/peers/"$filename"
 pty "pptp $vpn_address --nolaunchpppd"
@@ -40,22 +40,22 @@ defaultroute
 replacedefaultroute
 EOL
 
-echo "[3/?] Creating PPTP VPN config file... Complete!"
+echo "[3/10] Creating PPTP VPN config file... Complete!"
 
 # ==========
 
-echo "[4/?] Installing dependencies for CRI-O and k8s..."
+echo "[4/10] Installing dependencies for CRI-O and k8s..."
 apt install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common
-echo "[4/?] Installing dependencies for CRI-O and k8s... Complete!"
+echo "[4/10] Installing dependencies for CRI-O and k8s... Complete!"
 
 # ==========
 
-echo "[5/?] Disabling SWAP mechanism..."
+echo "[5/10] Disabling SWAP mechanism..."
 
 output_SWAP=$(swapon -s)
 
 if [-z "$output_SWAP"]; then
-    echo "[5/?] Disabling SWAP mechanism... SWAP is already OFF, moving on"
+    echo "[5/10] Disabling SWAP mechanism... SWAP is already OFF, moving on"
 else
     swapoff -a						# turn off SWAP
 
@@ -66,12 +66,12 @@ else
     #echo "Current /etc/fstab content:"
     #cat /etc/fstab
 
-    echo "[5/?] Disabling SWAP mechanism... Complete!"
+    echo "[5/10] Disabling SWAP mechanism... Complete!"
 fi
 
 # ==========
 
-echo "[6/?] Loading Network modules..."
+echo "[6/10] Loading Network modules..."
 
 # Add network modules for k8s into konfig file
 cat <<EOL > /etc/modules-load.d/k8s.conf
@@ -89,7 +89,7 @@ output_overlay=$(lsmod | egrep "overlay" | awk '{print $3}')
 
 if [ $output_br_netfilter==0 ] && [ $output_overlay==0 ]; then
     echo "br_netfilter and overlay are loaded"
-    echo "[6/?] Loading Network modules... Complete!"
+    echo "[6/10] Loading Network modules... Complete!"
 else
     if [ $output_br_netfilter!=0 ]; then
         echo "br_netfilter is not loaded, check problem manually"
@@ -97,12 +97,12 @@ else
     if [ $output_oberlay!=0 ]; then
         echo "overlay is not loaded, check problem manually"
     fi
-    echo "[6/?] [WARNING] Some network modules are not properly loaded, check logs"
+    echo "[6/10] [WARNING] Some network modules are not properly loaded, check logs"
 fi
 
 # ==========
 
-echo "[7/?] Configuring network parameters..."
+echo "[7/10] Configuring network parameters..."
 
 # Set parameters in file
 cat <<EOL > /etc/sysctl.d/k8s.conf
@@ -117,11 +117,11 @@ sysctl --system
 # Disabling Uncompicated Firewall
 systemctl stop ufw && systemctl disable ufw
 
-echo "[7/?] Configuring network parameters... Complete!"
+echo "[7/10] Configuring network parameters... Complete!"
 
 # ==========
 
-echo "[8/?] Installing CRI-O..."
+echo "[8/10] Installing CRI-O..."
 
 echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
 echo "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$VERSION/$OS/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:$VERSION.list
@@ -135,11 +135,11 @@ sudo apt-get install cri-o cri-o-runc cri-tools -y
 systemctl start crio && systemctl enable crio
 #systemctl status crio
 
-echo "[8/?] Installing CRI-O... Complete!"
+echo "[8/10] Installing CRI-O... Complete!"
 
 # ==========
 
-echo "[9/?] Installing k8s packages..."
+echo "[9/10] Installing k8s packages..."
 
 apt update && apt install -y apt-transport-https ca-certificates curl gpg
 
@@ -152,9 +152,9 @@ echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.
 
 apt update && apt install -y kubelet kubeadm kubectl && apt-mark hold kubelet kubeadm kubectl
 
-echo "[9/?] Installing k8s packages... Complete!"
+echo "[9/10] Installing k8s packages... Complete!"
 
 # ==========
 
-echo "[10/?] Installation script is complete, reboot the system"
+echo "[10/10] Installation script is complete, reboot the system"
 #reboot
