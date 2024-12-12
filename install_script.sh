@@ -58,7 +58,7 @@ echo "[3/?] Creating PPTP VPN config file... Complete!"
 # ==========
 
 echo "[4/?] Installing dependencies for CRI-O and k8s..."
-apt install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+apt install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common
 echo "[4/?] Installing dependencies for CRI-O and k8s... Complete!"
 
 # ==========
@@ -71,15 +71,49 @@ if [-z "$output_SWAP"]; then
     echo "[5/?] Disabling SWAP mechanism... SWAP is already OFF, moving on"
 else
     swapoff -a						# turn off SWAP
-    
+
     echo "Removing SWAP entries from /etc/fstab..."
     cp /etc/fstab /etc/fstab.bak			# make backup before removing SWAP entries
-    
+
     sed -i '/swap/d' /etc/fstab				# Remove all lines containing SWAP from file
-    echo "Current /etc/fstab content:"
-    cat /etc/fstab
-    
+    #echo "Current /etc/fstab content:"
+    #cat /etc/fstab
+
     echo "[5/?] Disabling SWAP mechanism... Complete!"
 fi
 
 # ==========
+
+echo "[6/?] Loading Network modules..."
+
+# Add network modules for k8s into konfig file
+cat <<EOL /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOL
+
+# Load network modules
+modprobe overlay
+modprobe br_netfilter
+
+# Check if modules are properly loaded:
+output_br_netfilter=$(lsmod | egrep "br_netfilter" | sed '1q;d' | awk '{print $3}')
+output_overlay=$(lsmod | egrep "overlay" | awk '{print $3}')
+
+if [ $output_br_netfilter==0 ] && [ $output_overlay==0 ]; then
+    echo "br_netfilter and overlay are loaded"
+    echo "[6/?] Loading Network modules... Complete!"
+else
+    if [ $output_br_netfilter!=0 ]; then
+        echo "br_netfilter is not loaded, check problem manually"
+    fi
+    if [ $output_oberlay!=0 ]; then
+        echo "overlay is not loaded, check problem manually"
+    fi
+    echo "[6/?] [WARNING] Some network modules are not properly loaded, check logs"
+fi
+
+
+# ========== FINAL
+
+# reboot
