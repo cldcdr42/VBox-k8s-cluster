@@ -5,10 +5,10 @@
 vpn_address="192.168.0.0"
 name="THE NAME"
 password="THE PASS"
-
 filename="vpn_Test"
 
-debug=1
+OS="xUbuntu_22.04"
+VERSION="1.25"
 
 # ========== CONFIG ========== #
 
@@ -131,6 +131,24 @@ sysctl --system
 systemctl stop ufw && systemctl disable ufw
 
 echo "[7/?] Configuring network parameters... Complete!"
+
+# ==========
+
+echo "[8/?] Installing CRI-O..."
+
+echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/ /" | tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+echo "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$VERSION/$OS/ /" | tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:$VERSION.list
+
+curl -L https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:$VERSION/$OS/Release.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/libcontainers.gpg add -
+curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/Release.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/libcontainers.gpg add -
+
+sudo apt-get update
+sudo apt-get install cri-o cri-o-runc cri-tools -y
+
+systemctl start crio && systemctl enable crio
+#systemctl status crio
+
+echo "[8/?] Installing CRI-O... Complete!"
 
 # ========== FINAL
 
