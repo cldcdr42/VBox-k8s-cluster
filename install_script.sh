@@ -113,6 +113,24 @@ else
     echo "[6/?] [WARNING] Some network modules are not properly loaded, check logs"
 fi
 
+# ==========
+
+echo "[7/?] Configuring network parameters..."
+
+# Set parameters in file
+cat <<EOL /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOL
+
+# Restart Core parameters
+sysctl --system
+
+# Disabling Uncompicated Firewall
+systemctl stop ufw && systemctl disable ufw
+
+echo "[7/?] Configuring network parameters... Complete!"
 
 # ========== FINAL
 
