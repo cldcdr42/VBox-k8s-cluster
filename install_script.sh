@@ -136,8 +136,8 @@ echo "[7/?] Configuring network parameters... Complete!"
 
 echo "[8/?] Installing CRI-O..."
 
-echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/ /" | tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-echo "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$VERSION/$OS/ /" | tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:$VERSION.list
+echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+echo "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$VERSION/$OS/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:$VERSION.list
 
 curl -L https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:$VERSION/$OS/Release.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/libcontainers.gpg add -
 curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/Release.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/libcontainers.gpg add -
@@ -149,6 +149,23 @@ systemctl start crio && systemctl enable crio
 #systemctl status crio
 
 echo "[8/?] Installing CRI-O... Complete!"
+
+# ==========
+
+echo "[9/?] Installing k8s packages..."
+
+apt update && apt install -y apt-transport-https ca-certificates curl gpg
+
+if [ ! -d "/etc/apt/keyrings" ]; then
+    sudo mkdir -p -m 755 /etc/apt/keyrings
+fi
+
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' > /etc/apt/sources.list.d/kubernetes.list
+
+apt update && apt install -y kubelet kubeadm kubectl && apt-mark hold kubelet kubeadm kubectl
+
+echo "[9/?] Installing k8s packages... Complete!"
 
 # ========== FINAL
 
