@@ -56,3 +56,30 @@ EOL
 echo "[3/?] Creating PPTP VPN config file... Complete!"
 
 # ==========
+
+echo "[4/?] Installing dependencies for CRI-O and k8s..."
+apt install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+echo "[4/?] Installing dependencies for CRI-O and k8s... Complete!"
+
+# ==========
+
+echo "[5/?] Disabling SWAP mechanism..."
+
+output_SWAP=$(swapon -s)
+
+if [-z "$output_SWAP"]; then
+    echo "[5/?] Disabling SWAP mechanism... SWAP is already OFF, moving on"
+else
+    swapoff -a						# turn off SWAP
+    
+    echo "Removing SWAP entries from /etc/fstab..."
+    cp /etc/fstab /etc/fstab.bak			# make backup before removing SWAP entries
+    
+    sed -i '/swap/d' /etc/fstab				# Remove all lines containing SWAP from file
+    echo "Current /etc/fstab content:"
+    cat /etc/fstab
+    
+    echo "[5/?] Disabling SWAP mechanism... Complete!"
+fi
+
+# ==========
