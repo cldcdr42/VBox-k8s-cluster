@@ -1,33 +1,20 @@
 #!/bin/bash
 
-# ========== CONFIG ========== #
+# ========== CONFIG - start ========== #
 
 vpn_address="192.168.0.0"
-name="THE NAME"
-password="THE PASS"
-filename="vpn_Test"
+name="student42"
+
+# MAKE SURE TO PUT BACKSLASH \ BEFORE $ SIGNS IN PASSWORDS
+# BAD:   password="124$23"
+# GOOD:  password="124\$23"
+password="O\$dw"
+filename="vpn_PPTP"
 
 OS="xUbuntu_22.04"
 VERSION="1.25"
 
-# ========== CONFIG ========== #
-
-#if ["ip_address" == "192.168.0.0"]; then
-#    echo "ip address is the same"
-#else
-#    echo "ip address is different!!!"
-#fi
-
-#if [debug == 0]; then
-#    echo "degug is 0"
-#else
-#    echo "debug is not 0"
-#fi
-
-#echo $name
-#echo $password
-
-# ==========
+# ========== CONFIG - end ========== #
 
 echo "[1/?] Updating system packages..."
 apt update && apt upgrade -y
@@ -87,7 +74,7 @@ fi
 echo "[6/?] Loading Network modules..."
 
 # Add network modules for k8s into konfig file
-cat <<EOL /etc/modules-load.d/k8s.conf
+cat <<EOL > /etc/modules-load.d/k8s.conf
 overlay
 br_netfilter
 EOL
@@ -118,7 +105,7 @@ fi
 echo "[7/?] Configuring network parameters..."
 
 # Set parameters in file
-cat <<EOL /etc/sysctl.d/k8s.conf
+cat <<EOL > /etc/sysctl.d/k8s.conf
 net.bridge.bridge-nf-call-iptables  = 1
 net.bridge.bridge-nf-call-ip6tables = 1
 net.ipv4.ip_forward                 = 1
@@ -167,6 +154,7 @@ apt update && apt install -y kubelet kubeadm kubectl && apt-mark hold kubelet ku
 
 echo "[9/?] Installing k8s packages... Complete!"
 
-# ========== FINAL
+# ==========
 
-# reboot
+echo "[10/?] Installation script is complete, reboot the system"
+#reboot
