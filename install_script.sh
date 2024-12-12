@@ -30,7 +30,7 @@ debug=1
 # ==========
 
 echo "[1/?] Updating system packages..."
-apt updaye && apt upgrade -y
+apt update && apt upgrade -y
 echo "[1/?] Updationg system packages... Complete!"
 
 # ==========
